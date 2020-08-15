@@ -20,7 +20,8 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
-    Wheelbase.h
+    Wheelbase.h \
+    helper.h
 
 FORMS +=
 
