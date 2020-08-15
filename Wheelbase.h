@@ -2,10 +2,20 @@
 #define WHEELBASE_H
 
 #include <QGraphicsRectItem>
+#include <QObject>
+#include "helper.h"
 
-class Wheelbase : public QGraphicsRectItem {
+class Wheelbase : public QObject, public QGraphicsRectItem {
+    Q_OBJECT
 public:
-    void keyPressEvent(QKeyEvent *event);
+    Wheelbase();
+    void set_vel(XYTheta velocity);
+public slots:
+    void move(XYTheta velocity);
+private:
+    XYTheta vel;
+    WheelSpeed wheel_speed;
+    WheelSpeed get_wheel_speed(XYTheta velocity);
 };
 
 
