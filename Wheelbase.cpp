@@ -1,4 +1,5 @@
 #include "Wheelbase.h"
+#include "Obstacle.h"
 #include <QTimer>
 #include <QDebug>
 
@@ -20,13 +21,19 @@ void Wheelbase::set_vel(XYTheta velocity){
 }
 
 void Wheelbase::move() {
-    //WheelSpeed ws = get_wheel_speed(velocity);
-    //setPos()
+    /* Detect Collisions */
+    QList<QGraphicsItem *> colliding_items = collidingItems();
+    /* End */
     //change coordinates according to real field
-    double x_increment = vel.x*(0.01);
-    double y_increment = vel.y*(0.01);
-    setPos(x()+x_increment, y()+y_increment);
-    qDebug() << x_increment;
+    double x_increment = vel.x*(0.01)*0.8; //apply friction
+    double y_increment = vel.y*(0.01)*0.8;
+    if (colliding_items.size() > 0) {
+        setPos(x(), y());
+    }
+    else
+        setPos(x()+x_increment, y()+y_increment);
+    //qDebug() << x_increment;
+    //detect collisions
 }
 
 WheelSpeed Wheelbase::get_wheel_speed(XYTheta velocity) {
