@@ -11,7 +11,7 @@ public:
     Wheelbase();
     void set_vel(XYTheta velocity);
 public slots:
-    void move(XYTheta velocity);
+    void move();
 private:
     XYTheta vel;
     WheelSpeed wheel_speed;

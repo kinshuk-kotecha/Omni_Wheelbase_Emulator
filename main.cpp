@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     scene->setSceneRect(0,0,1000,665); //same as view
     view->setBackgroundBrush(QBrush(QImage(":/images/background.png")));
     view->show();
+    wheelbase->set_vel({50,50});
 
     return a.exec();
 }
