@@ -4,15 +4,22 @@
 #include <QGraphicsRectItem>
 #include "Wheelbase.h"
 #include "Obstacle.h"
+#include "Emulator.h"
 #include <QImage>
 #include <QBrush>
+#include <QElapsedTimer>
+#include <QDebug>
+#include <QTimer>
+
+QElapsedTimer *TIME = new QElapsedTimer();
+QTimer *timer = new QTimer();
+Wheelbase *wheelbase = new Wheelbase(timer);
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     QGraphicsScene *scene = new QGraphicsScene();
-    Wheelbase *wheelbase = new Wheelbase();
     scene->addItem(wheelbase);
 
     /* add obstacles */
@@ -33,14 +40,17 @@ int main(int argc, char *argv[])
     Obstacle *pole5 = new Obstacle(16,16,699,396);
     scene->addItem(pole5);
     QGraphicsView *view = new QGraphicsView(scene);
-    /* End */
 
     view->setScene(scene);
     view->setFixedSize(1000,665); //size of robocon field in cm
     scene->setSceneRect(0,0,1000,665); //same as view
     view->setBackgroundBrush(QBrush(QImage(":/images/background.png")));
     view->show();
-    wheelbase->set_vel({50,-50});
+    //wheelbase->set_vel({50,-50});
+
+    TIME->start();
+
+    Emulator *emulator = new Emulator(timer);
 
     return a.exec();
 }
