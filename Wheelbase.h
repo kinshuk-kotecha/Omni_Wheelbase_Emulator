@@ -17,7 +17,6 @@ private:
     XYTheta vel;
     WheelSpeed wheel_speed;
     WheelSpeed get_wheel_speed(const XYTheta& velocity);
-    friend class Emulator;
 };
 
 extern Wheelbase *wheelbase;

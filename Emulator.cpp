@@ -33,7 +33,11 @@ Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelb
     timer->start(10);
 }
 
-void Emulator::generate_trapazoid(const float &acc_limit, const XYTheta &target, Wheelbase& wheelbase) {
+Emulator::~Emulator() {
+    delete wheelbase;
+}
+
+XYTheta Emulator::generate_trapazoid(const float &acc_limit, const XYTheta &target, Wheelbase& wheelbase) {
     static float START_VEL = 0;
     static Vec2 cur_pos = {0,0};
     static RTOmega cur_vel = {{0,0},0};
@@ -66,20 +70,24 @@ void Emulator::generate_trapazoid(const float &acc_limit, const XYTheta &target,
 
     if (fabs(cur_pos.x - target.x) < 5 && fabs(cur_pos.y - target.y) < 5) {
         wheelbase.set_vel({0,0,0});
-        return;
+        return RTOmega2XYTheta({{0,0},0});
     }
 
-    wheelbase.set_vel(RTOmega2XYTheta(cur_vel));
+    return RTOmega2XYTheta(cur_vel);
+
+    //wheelbase.set_vel(RTOmega2XYTheta(cur_vel));
    // XYTheta debug = RTOmega2XYTheta(cur_vel);
-//    qDebug() << err_x << " " << err_y;
+    //    qDebug() << err_x << " " << err_y;
 }
 
-void Emulator::blah() {
+void Emulator::emulate() {
     static XYTheta target = {
         .x = 800,
         .y = 150,
         .theta = 0,
     };
-    generate_trapazoid(100,target, *wheelbase);
+    static XYTheta wb_vel;
+    wb_vel = generate_trapazoid(100,target, *wheelbase);
+    wheelbase->set_vel(wb_vel);
     wheelbase->move();
 }
