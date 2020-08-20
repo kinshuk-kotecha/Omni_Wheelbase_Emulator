@@ -1,10 +1,34 @@
 #include "Emulator.h"
+#include "Obstacle.h"
 #include <QTime>
 #include <QtMath>
 #include <QDebug>
 #include <QTimer>
+#include <QGraphicsScene>
 
-Emulator::Emulator(QTimer* timer) {
+Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb) {
+    /* Add Obstacles */
+    Obstacle rod1(300,3,0,253);
+    scene->addItem(&rod1);
+    Obstacle rod2(300,3,847,253);
+    scene->addItem(&rod2);
+    Obstacle rod3(1000,3,0,47);
+    scene->addItem(&rod3);
+    Obstacle pole1(16,16,300,246);
+    scene->addItem(&pole1);
+    Obstacle pole2(16,16,566,246);
+    scene->addItem(&pole2);
+    Obstacle pole3(16,16,832,246);
+    scene->addItem(&pole3);
+    Obstacle pole4(16,16,433,396);
+    scene->addItem(&pole4);
+    Obstacle pole5(16,16,699,396);
+    scene->addItem(&pole5);
+    /* End */
+
+    scene->addItem(wheelbase);
+    scene->setSceneRect(0,0,1000,665); //same as view
+
     connect(timer, SIGNAL(timeout()), this, SLOT(blah()));
     timer->start(10);
 }
@@ -46,14 +70,14 @@ void Emulator::generate_trapazoid(const float &acc_limit, const XYTheta &target,
     }
 
     wheelbase.set_vel(RTOmega2XYTheta(cur_vel));
-    XYTheta debug = RTOmega2XYTheta(cur_vel);
+   // XYTheta debug = RTOmega2XYTheta(cur_vel);
 //    qDebug() << err_x << " " << err_y;
 }
 
 void Emulator::blah() {
     static XYTheta target = {
-        .x = 500,
-        .y = 100,
+        .x = 800,
+        .y = 150,
         .theta = 0,
     };
     generate_trapazoid(100,target, *wheelbase);

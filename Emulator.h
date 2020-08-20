@@ -7,10 +7,12 @@
 class Emulator : public QObject {
     Q_OBJECT
 public:
-    Emulator(QTimer* timer);
+    Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wheelbase);
     void generate_trapazoid(const float& acc_limit, const XYTheta& target, Wheelbase& wheelbase);
 public slots:
     void blah();
+private:
+    Wheelbase *wheelbase;
 };
 
 #endif // EMULATOR_H

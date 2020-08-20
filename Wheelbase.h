@@ -8,7 +8,7 @@
 class Wheelbase : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
-    Wheelbase(QTimer* timer);
+    Wheelbase();
     void set_vel(const XYTheta& velocity);
     Vec2 get_pos() const;
 public slots:
