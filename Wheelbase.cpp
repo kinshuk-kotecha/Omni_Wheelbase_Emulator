@@ -21,8 +21,8 @@ void Wheelbase::set_vel(const XYTheta& velocity){
 
 Vec2 Wheelbase::get_pos() const {
     Vec2 pos;
-    pos.x = x();
-    pos.y = y();
+    pos.x = x()+45;
+    pos.y = y()+45;
     return pos;
 }
 
@@ -37,7 +37,7 @@ void Wheelbase::move() {
     }
     else
         setPos(x()+x_increment, y()+y_increment);
-    qDebug() << x_increment;
+    //qDebug() << x_increment;
 }
 
 WheelSpeed Wheelbase::get_wheel_speed(const XYTheta& velocity) {
