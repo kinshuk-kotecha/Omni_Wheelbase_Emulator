@@ -1,8 +1,10 @@
 #include "Wheelbase.h"
 #include "Obstacle.h"
+#include "helper.h"
 #include <QTimer>
 #include <QDebug>
 #include <QTime>
+#include <QRandomGenerator>
 
 Wheelbase::Wheelbase() : vel({0,0,0}) {
     /* set size and initial position */
@@ -11,8 +13,6 @@ Wheelbase::Wheelbase() : vel({0,0,0}) {
     /* make wheelbase focusable */
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
-    /* connect timer with move() */
-    //connect(timer, SIGNAL(timeout()), this, SLOT(move()));
 }
 
 void Wheelbase::set_vel(const XYTheta& velocity){
@@ -29,15 +29,21 @@ Vec2 Wheelbase::get_pos() const {
 void Wheelbase::move() {
     /* Detect Collisions */
     QList<QGraphicsItem *> colliding_items = collidingItems();
-
-    double x_increment = vel.x*(0.01)*0.8; //apply friction
-    double y_increment = vel.y*(0.01)*0.8;
+    QRandomGenerator random(get_ticks());
+    /* Apply Random Friction */
+    float friction = random.bounded(0.5);
+    double x_increment = vel.x*(0.01)*(1-friction);
+    double y_increment = vel.y*(0.01)*(1-friction);
+    /* Add slipping */
+    if (friction < 0.04 + (get_ticks() % 12)/1000) {
+        x_increment = 0;
+        y_increment = 0;
+    }
     if (colliding_items.size() > 0) {
         setPos(x(), y());
     }
     else
         setPos(x()+x_increment, y()+y_increment);
-    //qDebug() << x_increment;
 }
 
 WheelSpeed Wheelbase::get_wheel_speed(const XYTheta& velocity) {

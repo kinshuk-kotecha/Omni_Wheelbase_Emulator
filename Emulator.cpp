@@ -72,10 +72,6 @@ XYTheta Emulator::generate_trapezoid(const float &acc_limit, const XYTheta &targ
     }
 
     return RTOmega2XYTheta(cur_vel);
-
-    //wheelbase.set_vel(RTOmega2XYTheta(cur_vel));
-   // XYTheta debug = RTOmega2XYTheta(cur_vel);
-    //    qDebug() << err_x << " " << err_y;
 }
 
 void Emulator::set_acc_limit(const float &limit) {
