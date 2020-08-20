@@ -6,38 +6,36 @@
 #include <QTimer>
 #include <QGraphicsScene>
 
-Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb) {
+Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0) {
     /* Add Obstacles */
-    Obstacle rod1(300,3,0,253);
-    scene->addItem(&rod1);
-    Obstacle rod2(300,3,847,253);
-    scene->addItem(&rod2);
-    Obstacle rod3(1000,3,0,47);
-    scene->addItem(&rod3);
-    Obstacle pole1(16,16,300,246);
-    scene->addItem(&pole1);
-    Obstacle pole2(16,16,566,246);
-    scene->addItem(&pole2);
-    Obstacle pole3(16,16,832,246);
-    scene->addItem(&pole3);
-    Obstacle pole4(16,16,433,396);
-    scene->addItem(&pole4);
-    Obstacle pole5(16,16,699,396);
-    scene->addItem(&pole5);
+    obstacles[0] = new Obstacle(300,3,0,253);
+    obstacles[1] = new Obstacle(300,3,847,253);
+    obstacles[2] = new Obstacle(1000,3,0,47);
+    obstacles[3] = new Obstacle(16,16,300,246);
+    obstacles[4] = new Obstacle(16,16,566,246);
+    obstacles[5] = new Obstacle(16,16,832,246);
+    obstacles[6] = new Obstacle(16,16,433,396);
+    obstacles[7] = new Obstacle(16,16,699,396);
+    for (int i = 0; i < 8; i++) {
+        scene->addItem(obstacles[i]);
+    }
     /* End */
 
     scene->addItem(wheelbase);
     scene->setSceneRect(0,0,1000,665); //same as view
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(blah()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(emulate()));
     timer->start(10);
 }
 
 Emulator::~Emulator() {
     delete wheelbase;
+    for (int i = 0; i < 8; i++) {
+        delete obstacles[i];
+    }
 }
 
-XYTheta Emulator::generate_trapazoid(const float &acc_limit, const XYTheta &target, Wheelbase& wheelbase) {
+XYTheta Emulator::generate_trapezoid(const float &acc_limit, const XYTheta &target, Wheelbase& wheelbase) {
     static float START_VEL = 0;
     static Vec2 cur_pos = {0,0};
     static RTOmega cur_vel = {{0,0},0};
@@ -80,14 +78,17 @@ XYTheta Emulator::generate_trapazoid(const float &acc_limit, const XYTheta &targ
     //    qDebug() << err_x << " " << err_y;
 }
 
+void Emulator::set_acc_limit(const float &limit) {
+    acc_limit = limit;
+}
+
+void Emulator::set_target(const XYTheta &tar) {
+    target = tar;
+}
+
 void Emulator::emulate() {
-    static XYTheta target = {
-        .x = 800,
-        .y = 150,
-        .theta = 0,
-    };
     static XYTheta wb_vel;
-    wb_vel = generate_trapazoid(100,target, *wheelbase);
+    wb_vel = generate_trapezoid(100,target, *wheelbase);
     wheelbase->set_vel(wb_vel);
     wheelbase->move();
 }

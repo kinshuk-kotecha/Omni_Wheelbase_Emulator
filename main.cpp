@@ -1,3 +1,4 @@
+#include <iostream>
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -11,6 +12,7 @@
 #include <QDebug>
 #include <QTimer>
 
+using namespace std;
 QElapsedTimer *TIME = new QElapsedTimer();
 
 int main(int argc, char *argv[])
@@ -30,6 +32,16 @@ int main(int argc, char *argv[])
     TIME->start();
 
     Emulator *emulator = new Emulator(timer, scene, wheelbase);
+    XYTheta target = {0,0,0};
+    float acc_limit = 0;
+
+    cout << "Welcome to the Omni Wheelbase Simulator" << endl;
+    cout << "Enter Acceleration Limit" << endl;
+    cin >> acc_limit; emulator->set_acc_limit(acc_limit);
+    cout << "Enter Target(x)" << endl;
+    cin >> target.x;
+    cout << "Enter Target(y)" << endl;
+    cin >> target.y; emulator->set_target(target);
 
     return a.exec();
 }

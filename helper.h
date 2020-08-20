@@ -36,10 +36,11 @@ extern QElapsedTimer *TIME;
 
 #define get_ticks() TIME->elapsed()
 
-Vec2 polar2vec(const PolarVec p);
-XYTheta RTOmega2XYTheta(const RTOmega p);
-PolarVec polar_mul(const float k, const PolarVec p);
-Vec2 addv2(const Vec2 u, const Vec2 v);
+Vec2 polar2vec(const PolarVec& p);
+XYTheta RTOmega2XYTheta(const RTOmega& p);
+PolarVec polar_mul(const float& k, const PolarVec& p);
+Vec2 addv2(const Vec2& u, const Vec2& v);
+XYTheta Vec2toXYTheta(const Vec2& v);
 
 
 #endif // HELPER_H

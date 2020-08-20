@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QTime>
 
-Wheelbase::Wheelbase() {
+Wheelbase::Wheelbase() : vel({0,0,0}) {
     /* set size and initial position */
     setRect(0,0,90,90);
     setPos(0,160);
