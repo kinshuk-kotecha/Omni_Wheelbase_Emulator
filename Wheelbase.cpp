@@ -6,7 +6,7 @@
 #include <QTime>
 #include <QRandomGenerator>
 
-Wheelbase::Wheelbase() : vel({0,0,0}) {
+Wheelbase::Wheelbase() : opt_vel({0,0,0}), real_vel(opt_vel) {
     /* set size and initial position */
     setRect(0,0,90,90);
     setPos(0,160);
@@ -15,8 +15,16 @@ Wheelbase::Wheelbase() : vel({0,0,0}) {
     setFocus();
 }
 
-void Wheelbase::set_vel(const XYTheta& velocity){
-    vel = velocity;
+void Wheelbase::set_opt_vel(const XYTheta& velocity){
+    opt_vel = velocity;
+}
+
+XYTheta Wheelbase::get_opt_velocity() const {
+    return opt_vel;
+}
+
+XYTheta Wheelbase::get_real_velocity() const {
+    return real_vel;
 }
 
 Vec2 Wheelbase::get_pos() const {
@@ -32,8 +40,10 @@ void Wheelbase::move() {
     QRandomGenerator random(get_ticks());
     /* Apply Random Friction */
     float friction = random.bounded(0.5);
-    double x_increment = vel.x*(0.01)*(1-friction);
-    double y_increment = vel.y*(0.01)*(1-friction);
+    real_vel.x = opt_vel.x*(1-friction);
+    real_vel.y = opt_vel.y*(1-friction);
+    double x_increment = real_vel.x*(0.01);
+    double y_increment = real_vel.y*(0.01);
     /* Add slipping */
     if (friction < 0.04 + (get_ticks() % 12)/1000) {
         x_increment = 0;

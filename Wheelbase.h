@@ -9,12 +9,15 @@ class Wheelbase : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
     Wheelbase();
-    void set_vel(const XYTheta& velocity);
+    void set_opt_vel(const XYTheta& velocity);
+    XYTheta get_opt_velocity() const;
+    XYTheta get_real_velocity() const;
     Vec2 get_pos() const;
 public slots:
     void move();
 private:
-    XYTheta vel;
+    XYTheta opt_vel;
+    XYTheta real_vel;
     WheelSpeed wheel_speed;
     WheelSpeed get_wheel_speed(const XYTheta& velocity);
 };
