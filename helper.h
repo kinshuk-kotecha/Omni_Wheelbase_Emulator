@@ -32,15 +32,28 @@ struct RTOmega {
     float a; //angle -- equivalent to XYTheta's theta -- angle of rotation
 };
 
+enum PIDMode {
+    Trapezoid,
+    Bezier,
+};
+
+struct PIDError {
+    XYTheta p;
+    XYTheta i;
+    XYTheta d;
+};
+
 extern QElapsedTimer *TIME;
 
 #define get_ticks() TIME->elapsed()
+#define MAX_ACC_LIMIT 400
 
 Vec2 polar2vec(const PolarVec& p);
 XYTheta RTOmega2XYTheta(const RTOmega& p);
 PolarVec polar_mul(const float& k, const PolarVec& p);
 Vec2 addv2(const Vec2& u, const Vec2& v);
 XYTheta Vec2toXYTheta(const Vec2& v);
+XYTheta sub_xyt(const XYTheta a, const XYTheta b);
 
 
 #endif // HELPER_H

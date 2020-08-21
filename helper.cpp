@@ -40,3 +40,11 @@ XYTheta Vec2toXYTheta(const Vec2& v) {
             .theta = 0,
     };
 }
+
+XYTheta sub_xyt(const XYTheta a, const XYTheta b) {
+    return (XYTheta){
+        .x = a.x - b.x,
+        .y = a.y - b.y,
+        .theta = a.theta - b.theta,
+    };
+}

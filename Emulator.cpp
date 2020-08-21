@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QGraphicsScene>
 
-Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0) {
+Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0), opt_pos(target) {
     /* Add Obstacles */
     obstacles[0] = new Obstacle(300,3,0,253);
     obstacles[1] = new Obstacle(300,3,847,253);
@@ -35,8 +35,8 @@ Emulator::~Emulator() {
     }
 }
 
-XYTheta Emulator::generate_trapezoid(const float &acc_limit, const XYTheta &target, Wheelbase& wheelbase) {
-    static float START_VEL = 0;
+XYTheta Emulator::generate_trapezoid(const float &acc_limit, const XYTheta &target, Wheelbase& wheelbase, XYTheta& opt_pos) {
+    static float END_VEL = 0;
     static Vec2 cur_pos = {0,0};
     static RTOmega cur_vel = {{0,0},0};
     static float last_tick = 0;
@@ -49,7 +49,7 @@ XYTheta Emulator::generate_trapezoid(const float &acc_limit, const XYTheta &targ
     float err_x = target.x - cur_pos.x;
     float err_y = target.y - cur_pos.y;
     float s = qSqrt(err_x*err_x + err_y*err_y);
-    float tar_vel = qSqrt(2*acc_limit*s + START_VEL*START_VEL);
+    float tar_vel = qSqrt(2*acc_limit*s + END_VEL*END_VEL);
 
     if (tar_vel > (cur_vel.v.r + acc_limit * dT))
         cur_vel.v.r += acc_limit * dT;
@@ -64,27 +64,36 @@ XYTheta Emulator::generate_trapezoid(const float &acc_limit, const XYTheta &targ
     cur_pos = addv2(cur_pos, vdt);
 
     last_tick = get_ticks();
-    //START_VEL = cur_vel.v.r;
 
     if (fabs(cur_pos.x - target.x) < 5 && fabs(cur_pos.y - target.y) < 5) {
-        wheelbase.set_vel({0,0,0});
+        wheelbase.set_opt_vel({0,0,0});
+        opt_pos = target;
         return RTOmega2XYTheta({{0,0},0});
     }
 
+    opt_pos = (XYTheta) { .x = cur_pos.x, .y = cur_pos.y, .theta = 0};
     return RTOmega2XYTheta(cur_vel);
 }
 
 void Emulator::set_acc_limit(const float &limit) {
-    acc_limit = limit;
+    (limit > 300) ? acc_limit = 300 : acc_limit = limit;
 }
 
 void Emulator::set_target(const XYTheta &tar) {
     target = tar;
 }
 
+void Emulator::PID(const XYTheta &opt_pos, XYTheta &opt_vel, PIDMode mode) {
+    PIDError err;
+}
+
 void Emulator::emulate() {
-    static XYTheta wb_vel;
-    wb_vel = generate_trapezoid(100,target, *wheelbase);
-    wheelbase->set_vel(wb_vel);
+    static XYTheta opt_vel;
+    opt_vel = generate_trapezoid(100, target, *wheelbase, opt_pos);
+    wheelbase->set_opt_vel(opt_vel);
     wheelbase->move();
+}
+
+PIDError Emulator::calc_pid_err(const XYTheta &opt_pos, const XYTheta &opt_vel, PIDError &err) {
+
 }
