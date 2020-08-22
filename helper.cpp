@@ -41,10 +41,26 @@ XYTheta Vec2toXYTheta(const Vec2& v) {
     };
 }
 
-XYTheta sub_xyt(const XYTheta a, const XYTheta b) {
+XYTheta sub_xyt(const XYTheta& a, const XYTheta& b) {
     return (XYTheta){
         .x = a.x - b.x,
         .y = a.y - b.y,
         .theta = a.theta - b.theta,
+    };
+}
+
+XYTheta add_xyt(const XYTheta& a, const XYTheta& b) {
+    return (XYTheta){
+        .x = a.x + b.x,
+        .y = a.y + b.y,
+        .theta = a.theta + b.theta,
+    };
+}
+
+XYTheta mul_xyt(const XYTheta& a, const XYTheta& b) {
+    return (XYTheta){
+        .x = a.x * b.x,
+        .y = a.y * b.y,
+        .theta = a.theta * b.theta,
     };
 }

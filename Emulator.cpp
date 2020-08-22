@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QGraphicsScene>
 
-Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0), opt_pos(target) {
+Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0), opt_pos(target), mode(Trapezoid) {
     /* Add Obstacles */
     obstacles[0] = new Obstacle(300,3,0,253);
     obstacles[1] = new Obstacle(300,3,847,253);
@@ -19,7 +19,11 @@ Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelb
     for (int i = 0; i < 8; i++) {
         scene->addItem(obstacles[i]);
     }
-    /* End */
+
+    /* Initialize pid_gains */
+    for (int i = 0; i < N_PIDModes; i++) {
+        pid_gains[i] = {{100,100,100},{100,100,100},{0,0,0}};
+    }
 
     scene->addItem(wheelbase);
     scene->setSceneRect(0,0,1000,665); //same as view
@@ -83,17 +87,63 @@ void Emulator::set_target(const XYTheta &tar) {
     target = tar;
 }
 
+void Emulator::set_mode(const PIDMode &pid_mode) {
+    mode = pid_mode;
+}
+
+void Emulator::set_pid_gains(const PIDGain &gains)
+{
+    pid_gains[mode] = gains;
+}
+
 void Emulator::PID(const XYTheta &opt_pos, XYTheta &opt_vel, PIDMode mode) {
-    PIDError err;
+    PIDError err = {{0,0,0},{0,0,0},{0,0,0}};
+    err = calc_pid_err(opt_pos, opt_vel, err);
+    XYTheta clamp_values = {10,10,1};
+    clamp_integral(err, clamp_values);
+    XYTheta gains = apply_pid_gains(err, mode);
+    opt_vel = add_xyt(opt_vel, gains);
 }
 
 void Emulator::emulate() {
     static XYTheta opt_vel;
     opt_vel = generate_trapezoid(100, target, *wheelbase, opt_pos);
+    PID(opt_pos,opt_vel,mode);
     wheelbase->set_opt_vel(opt_vel);
     wheelbase->move();
 }
 
-PIDError Emulator::calc_pid_err(const XYTheta &opt_pos, const XYTheta &opt_vel, PIDError &err) {
+PIDError Emulator::calc_pid_err(const XYTheta &opt_pos, const XYTheta &opt_vel, PIDError &previous_err) {
+    XYTheta pos_err = sub_xyt(opt_pos, Vec2toXYTheta(wheelbase->get_pos()));
+    XYTheta vel_err = sub_xyt(opt_vel, wheelbase->get_real_velocity());
+    PIDError pid_err = (PIDError){
+            .p = pos_err,
+            .i = add_xyt(previous_err.i,pos_err),
+            .d = vel_err,
+    };
 
+    if (fabs(pid_err.p.x) < 1 && fabs(pid_err.d.x) < 1) {
+        pid_err.p.x = 0; pid_err.d.x = 0;
+    }
+    if (fabs(pid_err.p.y) < 1 && fabs(pid_err.d.y) < 1) {
+        pid_err.p.y = 0; pid_err.d.y = 0;
+    }
+    if (fabs(pid_err.p.theta) < 1 && fabs(pid_err.d.theta) < 1) {
+        pid_err.p.theta = 0; pid_err.d.theta = 0;
+    }
+    return pid_err;
+}
+
+void Emulator::clamp_integral(PIDError &err, const XYTheta &clamp_values) {
+    err.i.x = fmax(fmin(err.i.x, clamp_values.x),-clamp_values.x);
+    err.i.y = fmax(fmin(err.i.y, clamp_values.y),-clamp_values.y);
+    err.i.theta = fmax(fmin(err.i.theta, clamp_values.theta),-clamp_values.theta);
+}
+
+XYTheta Emulator::apply_pid_gains(const PIDError &err, const PIDMode& mode) {
+    PIDGain gain = pid_gains[mode];
+    XYTheta out = mul_xyt(gain.p, err.p);
+    out = add_xyt(out, mul_xyt(gain.d, err.d));
+    out = add_xyt(out, mul_xyt(gain.i, err.i));
+    return out;
 }

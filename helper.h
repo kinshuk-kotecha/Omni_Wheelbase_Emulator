@@ -35,6 +35,7 @@ struct RTOmega {
 enum PIDMode {
     Trapezoid,
     Bezier,
+    N_PIDModes,
 };
 
 struct PIDError {
@@ -42,6 +43,8 @@ struct PIDError {
     XYTheta i;
     XYTheta d;
 };
+
+typedef PIDError PIDGain;
 
 extern QElapsedTimer *TIME;
 
@@ -53,7 +56,9 @@ XYTheta RTOmega2XYTheta(const RTOmega& p);
 PolarVec polar_mul(const float& k, const PolarVec& p);
 Vec2 addv2(const Vec2& u, const Vec2& v);
 XYTheta Vec2toXYTheta(const Vec2& v);
-XYTheta sub_xyt(const XYTheta a, const XYTheta b);
+XYTheta sub_xyt(const XYTheta& a, const XYTheta& b);
+XYTheta add_xyt(const XYTheta& a, const XYTheta& b);
+XYTheta mul_xyt(const XYTheta& a, const XYTheta& b);
 
 
 #endif // HELPER_H
