@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
     Emulator *emulator = new Emulator(timer, scene, wheelbase);
     XYTheta target = {0,0,0};
     float acc_limit = 0;
+    PIDGain user_gains = {{0,0,0},{0,0,0},{0,0,0}};
 
     cout << "Welcome to the Omni Wheelbase Simulator" << endl;
     cout << "Enter Acceleration Limit" << endl;
@@ -42,6 +43,9 @@ int main(int argc, char *argv[])
     cin >> target.x;
     cout << "Enter Target(y)" << endl;
     cin >> target.y; emulator->set_target(target);
+    cout << "Enter PID gains: px py ix iy dx dy" << endl;
+    cin >> user_gains.p.x >> user_gains.p.y >> user_gains.i.x >> user_gains.i.y >> user_gains.d.x >> user_gains.d.y;
+    emulator->set_pid_gains(user_gains);
 
     return a.exec();
 }

@@ -22,7 +22,7 @@ Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelb
 
     /* Initialize pid_gains */
     for (int i = 0; i < N_PIDModes; i++) {
-        pid_gains[i] = {{100,100,100},{100,100,100},{0,0,0}};
+        pid_gains[i] = {{50,20,0},{50,20,0},{0,0,0}};
     }
 
     scene->addItem(wheelbase);
