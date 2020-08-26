@@ -17,6 +17,8 @@ Wheelbase::Wheelbase() : opt_vel({0,0,0}), real_vel(opt_vel) {
 
 void Wheelbase::set_opt_vel(const XYTheta& velocity){
     opt_vel = velocity;
+    fmax(fmin(opt_vel.x, MAX_VEL),-MAX_VEL);
+    fmax(fmin(opt_vel.x, MAX_VEL),-MAX_VEL);
 }
 
 XYTheta Wheelbase::get_opt_velocity() const {

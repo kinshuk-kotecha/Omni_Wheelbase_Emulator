@@ -50,6 +50,7 @@ extern QElapsedTimer *TIME;
 
 #define get_ticks() TIME->elapsed()
 #define MAX_ACC_LIMIT 400
+#define MAX_VEL 400
 
 Vec2 polar2vec(const PolarVec& p);
 XYTheta RTOmega2XYTheta(const RTOmega& p);
