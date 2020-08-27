@@ -83,6 +83,10 @@ void Emulator::set_acc_limit(const float &limit) {
     (limit > 300) ? acc_limit = 300 : acc_limit = limit;
 }
 
+float Emulator::get_acc_limit() {
+    return acc_limit;
+}
+
 void Emulator::set_target(const XYTheta &tar) {
     target = tar;
 }
@@ -109,6 +113,7 @@ void Emulator::emulate() {
     static XYTheta opt_vel;
     opt_vel = generate_trapezoid(100, target, *wheelbase, opt_pos);
     PID(opt_pos,opt_vel,mode);
+    limit_vel_gain(opt_vel,wheelbase->get_opt_velocity(),0.01);
     wheelbase->set_opt_vel(opt_vel);
     wheelbase->move();
 }
@@ -147,3 +152,35 @@ XYTheta Emulator::apply_pid_gains(const PIDError &err, const PIDMode& mode) {
     out = add_xyt(out, mul_xyt(gain.i, err.i));
     return out;
 }
+
+void Emulator::apply_acc_limit(float &tar_vel, const RTOmega &cur_vel, const float& dT) {
+    if (tar_vel > (cur_vel.v.r + MAX_ACC * dT))
+        tar_vel = cur_vel.v.r + MAX_ACC * dT;
+    else if (tar_vel < (cur_vel.v.r - MAX_ACC * dT))
+        tar_vel = cur_vel.v.r - MAX_ACC * dT;
+    else
+        tar_vel = cur_vel.v.r;
+}
+
+void Emulator::limit_vel_gain(XYTheta &tar_vel, const XYTheta& cur_vel, const float& dT) {
+    /* limit x vel */
+    if (tar_vel.x > (cur_vel.x + MAX_ACC * dT))
+        tar_vel.x = cur_vel.x + MAX_ACC * dT;
+    else if (tar_vel.x < (cur_vel.x - MAX_ACC * dT))
+        tar_vel.x = cur_vel.x - MAX_ACC * dT;
+    else
+        tar_vel.x = cur_vel.x;
+
+    /* limit y vel */
+    if (tar_vel.y > (cur_vel.y + MAX_ACC * dT))
+        tar_vel.y = cur_vel.y + MAX_ACC * dT;
+    else if (tar_vel.y < (cur_vel.y - MAX_ACC * dT))
+        tar_vel.y = cur_vel.y - MAX_ACC * dT;
+    else
+        tar_vel.y = cur_vel.y;
+}
+
+/* TODO
+ * Overshooting
+ */
+

@@ -49,8 +49,9 @@ typedef PIDError PIDGain;
 extern QElapsedTimer *TIME;
 
 #define get_ticks() TIME->elapsed()
-#define MAX_ACC_LIMIT 2000
+#define MAX_ACC_LIMIT 400
 #define MAX_VEL 400
+#define MAX_ACC 1000
 
 Vec2 polar2vec(const PolarVec& p);
 XYTheta RTOmega2XYTheta(const RTOmega& p);

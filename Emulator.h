@@ -15,6 +15,7 @@ public:
     void set_target(const XYTheta& tar);
     void set_mode(const PIDMode& pid_mode);
     void set_pid_gains(const PIDGain& gains);
+    float get_acc_limit();
     void PID(const XYTheta& opt_pos, XYTheta& opt_vel, PIDMode mode);
 public slots:
     void emulate();
@@ -29,6 +30,8 @@ private:
     PIDError calc_pid_err(const XYTheta& opt_pos, const XYTheta& opt_vel, PIDError& err);
     void clamp_integral(PIDError& err, const XYTheta& clamp_values);
     XYTheta apply_pid_gains(const PIDError& err, const PIDMode& mode);
+    void apply_acc_limit(float& tar_vel, const RTOmega& cur_vel, const float& dT);
+    void limit_vel_gain(XYTheta& tar_vel, const XYTheta& cur_vel, const float& dT);
 };
 
 #endif // EMULATOR_H
