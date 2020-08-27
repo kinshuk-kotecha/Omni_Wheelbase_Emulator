@@ -5,11 +5,13 @@
 #include <QDebug>
 #include <QTime>
 #include <QRandomGenerator>
+#include <QBrush>
 
 Wheelbase::Wheelbase() : opt_vel({0,0,0}), real_vel(opt_vel) {
     /* set size and initial position */
     setRect(0,0,90,90);
     setPos(0,160);
+    setBrush(Qt::gray);
     /* make wheelbase focusable */
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
