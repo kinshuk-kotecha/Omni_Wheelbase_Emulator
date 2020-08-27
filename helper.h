@@ -49,7 +49,7 @@ typedef PIDError PIDGain;
 extern QElapsedTimer *TIME;
 
 #define get_ticks() TIME->elapsed()
-#define MAX_ACC_LIMIT 400
+#define MAX_ACC_LIMIT 2000
 #define MAX_VEL 400
 
 Vec2 polar2vec(const PolarVec& p);
@@ -60,6 +60,7 @@ XYTheta Vec2toXYTheta(const Vec2& v);
 XYTheta sub_xyt(const XYTheta& a, const XYTheta& b);
 XYTheta add_xyt(const XYTheta& a, const XYTheta& b);
 XYTheta mul_xyt(const XYTheta& a, const XYTheta& b);
+RTOmega XYTheta2RTOmega(const XYTheta& p);
 
 
 #endif // HELPER_H

@@ -19,6 +19,14 @@ XYTheta RTOmega2XYTheta(const RTOmega& p) {
     };
 }
 
+RTOmega XYTheta2RTOmega(const XYTheta& p) {
+    return (RTOmega) {
+            .v.theta = atan2(p.y,p.x),
+            .v.r = sqrt(p.x*p.x + p.y*p.y),
+            .a = p.theta,
+    };
+}
+
 PolarVec polar_mul(const float& k, const PolarVec& p) {
     return (PolarVec) {
             .r = k * p.r,
