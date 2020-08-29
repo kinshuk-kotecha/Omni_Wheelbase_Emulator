@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QGraphicsScene>
+#include <QRandomGenerator>
 
 Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0), opt_pos(target), mode(Trapezoid) {
     /* Add Obstacles */
@@ -163,24 +164,23 @@ void Emulator::apply_acc_limit(float &tar_vel, const RTOmega &cur_vel, const flo
 }
 
 void Emulator::limit_vel_gain(XYTheta &tar_vel, const XYTheta& cur_vel, const float& dT) {
+    QRandomGenerator random(get_ticks());
+    float friction = random.bounded(0.6);
+    float acc = MAX_ACC*(1-friction);
     /* limit x vel */
-    if (tar_vel.x > (cur_vel.x + MAX_ACC * dT))
-        tar_vel.x = cur_vel.x + MAX_ACC * dT;
-    else if (tar_vel.x < (cur_vel.x - MAX_ACC * dT))
-        tar_vel.x = cur_vel.x - MAX_ACC * dT;
+    if (tar_vel.x > (cur_vel.x + acc * dT))
+        tar_vel.x = cur_vel.x + acc * dT;
+    else if (tar_vel.x < (cur_vel.x - acc * dT))
+        tar_vel.x = cur_vel.x - acc * dT;
     else
         tar_vel.x = cur_vel.x;
 
     /* limit y vel */
-    if (tar_vel.y > (cur_vel.y + MAX_ACC * dT))
-        tar_vel.y = cur_vel.y + MAX_ACC * dT;
-    else if (tar_vel.y < (cur_vel.y - MAX_ACC * dT))
-        tar_vel.y = cur_vel.y - MAX_ACC * dT;
+    if (tar_vel.y > (cur_vel.y + acc * dT))
+        tar_vel.y = cur_vel.y + acc * dT;
+    else if (tar_vel.y < (cur_vel.y - acc * dT))
+        tar_vel.y = cur_vel.y - acc * dT;
     else
         tar_vel.y = cur_vel.y;
 }
-
-/* TODO
- * Overshooting
- */
 
