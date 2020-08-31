@@ -111,11 +111,11 @@ void Emulator::PID(const XYTheta &opt_pos, XYTheta &opt_vel, PIDMode mode) {
 }
 
 void Emulator::emulate() {
-    static XYTheta opt_vel;
-    opt_vel = generate_trapezoid(100, target, *wheelbase, opt_pos);
-    PID(opt_pos,opt_vel,mode);
-    limit_vel_gain(opt_vel,wheelbase->get_opt_velocity(),0.01);
-    wheelbase->set_opt_vel(opt_vel);
+//    static XYTheta opt_vel;
+//    opt_vel = generate_trapezoid(100, target, *wheelbase, opt_pos);
+//    PID(opt_pos,opt_vel,mode);
+//    limit_vel_gain(opt_vel,wheelbase->get_opt_velocity(),0.01);
+//    wheelbase->set_opt_vel(opt_vel);
     wheelbase->move();
 }
 

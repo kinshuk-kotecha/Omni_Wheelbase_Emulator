@@ -32,6 +32,7 @@ private:
     XYTheta apply_pid_gains(const PIDError& err, const PIDMode& mode);
     void apply_acc_limit(float& tar_vel, const RTOmega& cur_vel, const float& dT);
     void limit_vel_gain(XYTheta& tar_vel, const XYTheta& cur_vel, const float& dT);
+    friend class MainWindow;
 };
 
 #endif // EMULATOR_H

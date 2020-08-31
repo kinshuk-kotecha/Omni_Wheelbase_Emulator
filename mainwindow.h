@@ -17,15 +17,17 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void get_input();
 
 public slots:
     void response_submitted();
+    void handle_user_output();
 
 private:
     Ui::MainWindow *ui;
     Emulator *emulator;
-    UserProcess* process;
+    UserProcess* process = nullptr;
+    bool TextToFile(QString text);
+    bool compile();
 };
 
 #endif // MAINWINDOW_H

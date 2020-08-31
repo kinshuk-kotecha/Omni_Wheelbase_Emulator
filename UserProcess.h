@@ -4,7 +4,8 @@
 #include <QProcess>
 
 class UserProcess : public QProcess {
-
+public:
+    UserProcess();
 };
 
 #endif // USERPROCESS_H
