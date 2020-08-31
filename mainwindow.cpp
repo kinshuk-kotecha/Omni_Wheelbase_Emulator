@@ -80,7 +80,7 @@ void MainWindow::handle_user_output() {
     }
     else if (output[0] == "SetWheelbaseVel()") {
         if (output.length() != 3) {
-            ui->textBrowser->append(QString("Proper Use of SetWheelbaseVel():\ncout << SetWheelbaseVel() << float(x vel) << float(y vel) << endl;").toUtf8());
+            ui->textBrowser->append(QString("Proper Use of SetWheelbaseVel():\ncout << SetWheelbaseVel() << endl;\ncout << float(x vel) << endl;\ncout << float(y vel) << endl;").toUtf8());
             return;
         }
         emulator->wheelbase->set_opt_vel(XYTheta{.x = output[1].toFloat(),.y = output[2].toFloat(),.theta = 0});
