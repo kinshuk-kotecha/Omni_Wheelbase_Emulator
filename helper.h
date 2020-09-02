@@ -44,6 +44,14 @@ struct PIDError {
     XYTheta d;
 };
 
+enum LEVEL {
+    BEGINNER,
+    INTRO_TRAPEZOID,
+    INTRO_PID,
+    END,
+    N_LEVEL
+};
+
 typedef PIDError PIDGain;
 
 extern QElapsedTimer *TIME;

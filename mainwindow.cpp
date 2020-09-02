@@ -87,6 +87,38 @@ void MainWindow::handle_user_output() {
     }
     else {
         ui->textBrowser->append(output[0]);
+}
+
+void MainWindow::nextLevel() {
+    switch(emulator->level) {
+        case BEGINNER:
+            ui->codeEditor->setText(QString(R"~(
+#include <iostream>
+using namespace std;
+
+/* Helper Functions */
+
+float getWheelbasePos_X();
+float getWheelbasePos_Y();
+float getWheelbaseVel_X();
+float getWheelbaseVel_Y();
+void setWheelbaseVel(float x, float y);
+
+int main() {
+
+}
+                                        )~"));
+            ui->textBrowser->setText(QString("Welcome to the Omni Wheelbase Emulator\nUse the functions and try to reach the target\n"));
+            ui->textBrowser->append(QString("You can look up the available functions in the documentation"));
+            break;
+        case INTRO_TRAPEZOID:
+            ui->textBrowser->setText(QString(""));
+            break;
+        case INTRO_PID:
+            break;
+        case END:
+            break;
     }
+    emulator->level = static_cast<LEVEL>(static_cast<int>(emulator->level)+1);
 }
 

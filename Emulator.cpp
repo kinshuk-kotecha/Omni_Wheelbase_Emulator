@@ -7,7 +7,7 @@
 #include <QGraphicsScene>
 #include <QRandomGenerator>
 
-Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0), opt_pos(target), mode(Trapezoid) {
+Emulator::Emulator(QTimer* timer, QGraphicsScene* scene, Wheelbase *wb) : wheelbase(wb), target(Vec2toXYTheta(wb->get_pos())), acc_limit(0), opt_pos(target), mode(Trapezoid), level(BEGINNER) {
     /* Add Obstacles */
     obstacles[0] = new Obstacle(300,3,0,253);
     obstacles[1] = new Obstacle(300,3,847,253);

@@ -21,6 +21,7 @@ public:
 public slots:
     void response_submitted();
     void handle_user_output();
+    void nextLevel();
 
 private:
     Ui::MainWindow *ui;
