@@ -62,31 +62,35 @@ bool MainWindow::compile() {
 
 void MainWindow::handle_user_output() {
     QStringList output = QString(process->readAllStandardOutput()).split(QRegExp("[\n]"),QString::SkipEmptyParts);
-    if (output[0] == "GetWheelbasePos_X()") {
-        process->write(QString().setNum(emulator->wheelbase->get_pos().x).toUtf8());
-        process->write(QString("\n").toUtf8());
-    }
-    else if (output[0] == "GetWheelbasePos_Y()") {
-        process->write(QString().setNum(emulator->wheelbase->get_pos().y).toUtf8());
-        process->write(QString("\n").toUtf8());
-    }
-    else if (output[0] == "GetWheelbaseVel_X()") {
-        process->write(QString().setNum(emulator->wheelbase->get_real_velocity().x).toUtf8());
-        process->write(QString("\n").toUtf8());
-    }
-    else if (output[0] == "GetWheelbaseVel_Y()") {
-        process->write(QString().setNum(emulator->wheelbase->get_real_velocity().y).toUtf8());
-        process->write(QString("\n").toUtf8());
-    }
-    else if (output[0] == "SetWheelbaseVel()") {
-        if (output.length() != 3) {
-            ui->textBrowser->append(QString("Proper Use of SetWheelbaseVel():\ncout << SetWheelbaseVel() << endl;\ncout << float(x vel) << endl;\ncout << float(y vel) << endl;").toUtf8());
-            return;
+    for (int i = 0; i < output.length(); i++) {
+        if (output[i] == "getWheelbasePos_X()") {
+            process->write(QString().setNum(emulator->wheelbase->get_pos().x).toUtf8());
+            process->write(QString("\n").toUtf8());
         }
-        emulator->wheelbase->set_opt_vel(XYTheta{.x = output[1].toFloat(),.y = output[2].toFloat(),.theta = 0});
+        else if (output[i] == "getWheelbasePos_Y()") {
+            process->write(QString().setNum(emulator->wheelbase->get_pos().y).toUtf8());
+            process->write(QString("\n").toUtf8());
+        }
+        else if (output[i] == "getWheelbaseVel_X()") {
+            process->write(QString().setNum(emulator->wheelbase ->get_real_velocity().x).toUtf8());
+            process->write(QString("\n").toUtf8());
+        }
+        else if (output[i] == "getWheelbaseVel_Y()") {
+            process->write(QString().setNum(emulator->wheelbase->get_real_velocity().y).toUtf8());
+            process->write(QString("\n").toUtf8());
+        }
+        else if (output[i] == "setWheelbaseVel()") {
+            if (output.length() < i+3) {
+                ui->textBrowser->append(QString("Proper Use ofSetWheelbaseVel():\ncout << SetWheelbaseVel() << endl;\ncout << float(x vel) << endl;\ncout << float(y vel) << endl;").toUtf8());
+                return;
+            }
+            emulator->set_user_vel(XYTheta{.x = output[i+1].toFloat(),.y = output[i+2].toFloat(),.theta = 0});
+            i = i+2;
+        }
+        else {
+            ui->textBrowser->append(output[i]);
+        }
     }
-    else {
-        ui->textBrowser->append(output[0]);
 }
 
 void MainWindow::nextLevel() {
