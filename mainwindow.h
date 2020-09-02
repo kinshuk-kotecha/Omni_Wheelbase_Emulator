@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QCodeEditor>
+#include <QCXXHighlighter>
 #include "Emulator.h"
 #include "UserProcess.h"
 
@@ -27,6 +28,7 @@ private:
     Ui::MainWindow *ui;
     Emulator *emulator;
     UserProcess* process = nullptr;
+    QCXXHighlighter highlighter;
     bool TextToFile(QString text);
     bool compile();
     const QString helperFunctions = R"~(

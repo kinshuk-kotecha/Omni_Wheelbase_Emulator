@@ -101,6 +101,10 @@ void Emulator::set_pid_gains(const PIDGain &gains)
     pid_gains[mode] = gains;
 }
 
+void Emulator::set_user_vel(const XYTheta& vel) {
+    user_vel = vel;
+}
+
 void Emulator::PID(const XYTheta &opt_pos, XYTheta &opt_vel, PIDMode mode) {
     PIDError err = {{0,0,0},{0,0,0},{0,0,0}};
     err = calc_pid_err(opt_pos, opt_vel, err);
@@ -114,8 +118,9 @@ void Emulator::emulate() {
 //    static XYTheta opt_vel;
 //    opt_vel = generate_trapezoid(100, target, *wheelbase, opt_pos);
 //    PID(opt_pos,opt_vel,mode);
-//    limit_vel_gain(opt_vel,wheelbase->get_opt_velocity(),0.01);
-//    wheelbase->set_opt_vel(opt_vel);
+    XYTheta opt_vel = user_vel;
+    limit_vel_gain(opt_vel, wheelbase->get_opt_velocity(), 0.01);
+    wheelbase->set_opt_vel(opt_vel);
     wheelbase->move();
 }
 
@@ -172,15 +177,11 @@ void Emulator::limit_vel_gain(XYTheta &tar_vel, const XYTheta& cur_vel, const fl
         tar_vel.x = cur_vel.x + acc * dT;
     else if (tar_vel.x < (cur_vel.x - acc * dT))
         tar_vel.x = cur_vel.x - acc * dT;
-    else
-        tar_vel.x = cur_vel.x;
 
     /* limit y vel */
     if (tar_vel.y > (cur_vel.y + acc * dT))
         tar_vel.y = cur_vel.y + acc * dT;
     else if (tar_vel.y < (cur_vel.y - acc * dT))
         tar_vel.y = cur_vel.y - acc * dT;
-    else
-        tar_vel.y = cur_vel.y;
 }
 

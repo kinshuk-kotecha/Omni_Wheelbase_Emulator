@@ -16,8 +16,10 @@ MainWindow::MainWindow(QWidget *parent) :
     Wheelbase *wheelbase = new Wheelbase();
     emulator = new Emulator(timer, scene, wheelbase);
     ui->emulatorView->initialise(scene);
-    ui->textBrowser->setText(QString("Welcome to the Omni Wheelbase Emulator\n1. Type some code and try to move the wheelbase"));
-    ui->pushButton->connect(ui->pushButton, SIGNAL (clicked()),this, SLOT (response_submitted()));
+    ui->codeEditor->setHighlighter(&highlighter);
+    ui->enterButton->connect(ui->enterButton, SIGNAL (clicked()),this, SLOT (response_submitted()));
+    ui->nextButton->connect(ui->nextButton, SIGNAL (clicked()), this, SLOT (nextLevel()));
+    nextLevel();
 }
 
 MainWindow::~MainWindow()
@@ -28,9 +30,11 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::response_submitted() {
-    QString data = ui->textEdit->toPlainText();
+    QString data = ui->codeEditor->toPlainText();
+    data += helperFunctions;
     TextToFile(data);
-    compile();
+    if (!compile())
+        return;
     process = new UserProcess();
     process->connect(process,SIGNAL(readyReadStandardOutput()),this,SLOT(handle_user_output()));
     process->connect(process, QOverload<int>::of(&QProcess::finished), [this](){ process->kill(); process->deleteLater(); process = nullptr; } );
@@ -39,7 +43,7 @@ void MainWindow::response_submitted() {
 bool MainWindow::TextToFile(QString text) {
     QFile file("main.cpp");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        ui->textBrowser->append(QString("\n\nOpen Failed"));
+        ui->textBrowser->append(QString("\nOpen Failed"));
         return false;
     }
 
@@ -53,10 +57,10 @@ bool MainWindow::compile() {
     p.start("g++",arguments);
     p.waitForFinished();
     if(p.exitCode() != 0) {
-        ui->textBrowser->append(QString("\n\nCompilation Failed"));
+        ui->textBrowser->append(QString("\nCompilation Failed"));
         return false;
     }
-    ui->textBrowser->append(QString("\n\nCompilation Successful"));
+    ui->textBrowser->append(QString("\nCompilation Successful"));
     return true;
 }
 

@@ -15,6 +15,7 @@ public:
     void set_target(const XYTheta& tar);
     void set_mode(const PIDMode& pid_mode);
     void set_pid_gains(const PIDGain& gains);
+    void set_user_vel(const XYTheta& vel);
     float get_acc_limit();
     void PID(const XYTheta& opt_pos, XYTheta& opt_vel, PIDMode mode);
 public slots:
@@ -24,9 +25,11 @@ private:
     XYTheta target;
     float acc_limit;
     XYTheta opt_pos;
+    XYTheta user_vel;
     Obstacle* obstacles[8];
     PIDGain pid_gains[N_PIDModes];
     PIDMode mode;
+    LEVEL level;
     PIDError calc_pid_err(const XYTheta& opt_pos, const XYTheta& opt_vel, PIDError& err);
     void clamp_integral(PIDError& err, const XYTheta& clamp_values);
     XYTheta apply_pid_gains(const PIDError& err, const PIDMode& mode);
