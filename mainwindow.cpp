@@ -106,10 +106,25 @@ using namespace std;
 
 /* Helper Functions */
 
+/**
+ * @brief This function returns the current x position of the wheelbase
+ */
 float getWheelbasePos_X();
+/**
+ * @brief This function returns the current y position of the wheelbase
+ */
 float getWheelbasePos_Y();
+/**
+ * @brief This function returns the current x velocity of the wheelbase
+ */
 float getWheelbaseVel_X();
+/**
+ * @brief This function returns the current y velocity of the wheelbase
+ */
 float getWheelbaseVel_Y();
+/**
+ * @brief This function allows you to set the optimal velocity of the wheelbase
+ */
 void setWheelbaseVel(float x, float y);
 
 int main() {
@@ -117,7 +132,6 @@ int main() {
 }
                                         )~"));
             ui->textBrowser->setText(QString("Welcome to the Omni Wheelbase Emulator\nUse the functions and try to reach the target\n"));
-            ui->textBrowser->append(QString("You can look up the available functions in the documentation"));
             break;
         case INTRO_TRAPEZOID:
             ui->textBrowser->setText(QString(""));
